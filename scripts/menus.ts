@@ -2,21 +2,20 @@ import type { NavMenu, NavMenuItems } from '~/scripts/nav'
 
 export const navMenu: NavMenu[] = [
   {
-    heading: 'General',
+    heading: 'Басты мәзір',
     items: [
       {
-        title: 'Analytics',
+        title: 'Басты шолу',
         icon: 'i-lucide-bar-chart-2',
         link: '/',
       },
       {
-        title: 'Tasks',
+        title: 'Пікірлер',
         icon: 'i-lucide-calendar-check-2',
         link: '/tasks',
-        new: true,
       },
       {
-        title: 'Account',
+        title: 'Аккаунт',
         'icon': 'i-lucide-user',
         link: '/account',
       }

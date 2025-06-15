@@ -7,6 +7,10 @@ import DateRangePicker from "~/components/common/DateRangePicker.vue"
 import Overview from "~/components/dashboard/Overview.vue"
 import { Avatar, AvatarFallback } from "~/components/ui/avatar"
 
+definePageMeta({
+  middleware: 'auth'
+})
+
 interface Review {
   id: string
   userId: string

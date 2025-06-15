@@ -7,7 +7,7 @@ const route = useRoute()
 
 function setLinks() {
   if (route.fullPath === '/') {
-    return [{ title: 'Home', href: '/' }]
+    return [{ title: 'Басты', href: '/' }]
   }
 
   const segments = route.fullPath.split('/').filter(item => item !== '')

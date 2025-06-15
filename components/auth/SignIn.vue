@@ -5,30 +5,60 @@ import {Button} from "~/components/ui/button";
 import {Separator} from "~/components/ui/separator";
 import {Label} from "~/components/ui/label";
 import {Input} from "~/components/ui/input";
+import { useAuth } from '~/composables/useAuth'
 
-const email = ref('demo@gmail.com')
-const password = ref('password')
+const email = ref('')
+const password = ref('')
 const isLoading = ref(false)
+const errorMessage = ref('')
 
-function onSubmit(event: Event) {
+const { signIn } = useAuth()
+
+async function onSubmit(event: Event) {
   event.preventDefault()
-  if (!email.value || !password.value)
+
+  if (!email.value || !password.value) {
+    errorMessage.value = 'Барлық өрістерді толтырыңыз'
     return
+  }
 
   isLoading.value = true
+  errorMessage.value = ''
 
-  setTimeout(() => {
-    if (email.value === 'demo@gmail.com' && password.value === 'password')
-      navigateTo('/')
+  try {
+    await signIn(email.value, password.value)
+    await navigateTo('/')
+  } catch (error: any) {
+    console.error('Кіру қатесі:', error)
 
+    // Translate common Supabase errors to Kazakh
+    switch (error.message) {
+      case 'Invalid login credentials':
+        errorMessage.value = 'Дұрыс емес электрондық пошта немесе құпия сөз'
+        break
+      case 'Email not confirmed':
+        errorMessage.value = 'Электрондық поштаңызды растауыңыз керек'
+        break
+      case 'Too many requests':
+        errorMessage.value = 'Тым көп әрекет. Кейінірек көрініңіз'
+        break
+      default:
+        errorMessage.value = 'Кіру қатесі. Қайталап көріңіз'
+    }
+  } finally {
     isLoading.value = false
-  }, 3000)
+  }
 }
 </script>
 
 <template>
   <form class="grid gap-6" @submit="onSubmit">
+    <div v-if="errorMessage" class="text-sm text-red-600 bg-red-50 p-3 rounded-md">
+      {{ errorMessage }}
+    </div>
+
     <Separator label="Немесе жалғастыру" />
+
     <div class="grid gap-2">
       <Label for="email">
         Электрондық пошта
@@ -42,8 +72,10 @@ function onSubmit(event: Event) {
           auto-capitalize="none"
           auto-complete="email"
           auto-correct="off"
+          required
       />
     </div>
+
     <div class="grid gap-2">
       <div class="flex items-center">
         <Label for="password">
@@ -56,13 +88,15 @@ function onSubmit(event: Event) {
           Құпия сөзіңізді ұмыттыңыз ба?
         </NuxtLink>
       </div>
-      <PasswordInput id="password" v-model="password" />
+      <PasswordInput id="password" v-model="password" :disabled="isLoading" required />
     </div>
+
     <Button type="submit" class="w-full" :disabled="isLoading">
       <Loader2 v-if="isLoading" class="mr-2 h-4 w-4 animate-spin" />
       Кіру
     </Button>
   </form>
+
   <div class="mt-4 text-center text-sm text-muted-foreground">
     Аккаунтыңыз жоқ па?
     <NuxtLink to="/register" class="underline">
@@ -70,7 +104,3 @@ function onSubmit(event: Event) {
     </NuxtLink>
   </div>
 </template>
-
-<style scoped>
-
-</style>
