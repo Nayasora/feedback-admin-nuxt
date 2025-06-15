@@ -6,6 +6,49 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
 import DateRangePicker from "~/components/common/DateRangePicker.vue"
 import Overview from "~/components/dashboard/Overview.vue"
 import { Avatar, AvatarFallback } from "~/components/ui/avatar"
+import * as XLSX from 'xlsx';
+
+const exportToExcel = () => {
+  // Создаем рабочую книгу
+  const workbook = XLSX.utils.book_new();
+
+  // Данные для общей статистики
+  const statsData = [
+    ['Пікірлер статистикасы', ''],
+    ['Жалпы пікірлер саны', analytics.value?.totalReviews || 0],
+    ['Орташа рейтинг', analytics.value?.averageRating || 0],
+    ['Жағымды пікірлер', analytics.value?.sentimentCounts.positive || 0],
+    ['Бейтарап пікірлер', analytics.value?.sentimentCounts.neutral || 0],
+    ['Жағымсыз пікірлер', analytics.value?.sentimentCounts.negative || 0],
+  ];
+
+  // Данные для последних отзывов
+  const reviewsData = [
+    ['Пайдаланушы', 'Пікір мәтіні', 'Рейтинг', 'Тоналдылық', 'Күні']
+  ];
+
+  dataRecentReviews.value.forEach(review => {
+    reviewsData.push([
+      review.userName || '',
+      review.text,
+      review.rating.toString(),
+      review.sentiment === 'positive' ? 'Жағымды' :
+          review.sentiment === 'neutral' ? 'Бейтарап' : 'Жағымсыз',
+    ]);
+  });
+
+  // Создаем листы
+  const statsSheet = XLSX.utils.aoa_to_sheet(statsData);
+  const reviewsSheet = XLSX.utils.aoa_to_sheet(reviewsData);
+
+// Парақтарды кітапқа қосу
+  XLSX.utils.book_append_sheet(workbook, reviewsSheet, 'Соңғы пікірлер');
+  XLSX.utils.book_append_sheet(workbook, statsSheet, 'Статистика');
+
+// Файлды жүктеу
+  const date = new Date().toISOString().split('T')[0];
+  XLSX.writeFile(workbook, `Пікірлер_аналитикасы_${date}.xlsx`);
+};
 
 definePageMeta({
   middleware: 'auth'
@@ -63,7 +106,7 @@ const fetchReviews = async () => {
     // Нақты қолданбада бұл API-дан келуі керек
     dataRecentReviews.value = dataRecentReviews.value.map(review => ({
       ...review,
-      userName: `Пайдаланушы ${review.userId}`,
+      userName: `Пайдаланушы ${review.user.username}`,
       price: `$${(Math.random() * 100).toFixed(2)}`
     }))
   } catch (error) {
@@ -108,8 +151,7 @@ onMounted(async () => {
         Пікірлерді талдау тақтасы
       </h2>
       <div class="flex items-center space-x-2">
-        <DateRangePicker />
-        <Button>Экспорт</Button>
+        <Button @click="exportToExcel">Жүктеу</Button>
       </div>
     </div>
 
@@ -253,7 +295,7 @@ onMounted(async () => {
                 </div>
               </div>
               <div class="ml-auto font-medium">
-                {{ review.price }}
+                2GIS
               </div>
             </div>
           </CardContent>

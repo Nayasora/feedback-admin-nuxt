@@ -12,7 +12,7 @@ export const navMenu: NavMenu[] = [
       {
         title: 'Пікірлер',
         icon: 'i-lucide-calendar-check-2',
-        link: '/tasks',
+        link: '/reviews',
       },
       {
         title: 'Аккаунт',
