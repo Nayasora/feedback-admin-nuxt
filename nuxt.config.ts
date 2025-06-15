@@ -8,9 +8,9 @@ export default defineNuxtConfig({
   ],
   modules: [
     'shadcn-nuxt',
-    '@nuxt/icon',
     '@nuxt/eslint',
-    '@nuxtjs/supabase'
+    '@nuxtjs/supabase',
+    'nuxt-icon',
   ],
   vite: {
     plugins: [
