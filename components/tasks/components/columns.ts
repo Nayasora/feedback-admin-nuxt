@@ -4,7 +4,7 @@ import type { Task } from '../data/schema'
 import { Badge } from '~/components/ui/badge'
 import { Checkbox } from '~/components/ui/checkbox'
 import { h } from 'vue'
-import { labels, priorities, statuses } from '../data/data'
+import { priorities, statuses } from '../data/data'
 import DataTableColumnHeader from './DataTableColumnHeader.vue'
 import DataTableRowActions from './DataTableRowActions.vue'
 
@@ -31,15 +31,6 @@ export const columns: ColumnDef<Task>[] = [
   {
     accessorKey: 'title',
     header: ({ column }) => h(DataTableColumnHeader, { column, title: 'Title' }),
-
-    cell: ({ row }) => {
-      const label = labels.find(label => label.value === row.original.label)
-
-      return h('div', { class: 'flex space-x-2' }, [
-        label ? h(Badge, { variant: 'outline' }, () => label.label) : null,
-        h('span', { class: 'max-w-[500px] truncate font-medium' }, row.getValue('title')),
-      ])
-    },
   },
   {
     accessorKey: 'status',
