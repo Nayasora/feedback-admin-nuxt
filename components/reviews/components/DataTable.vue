@@ -6,7 +6,7 @@ import type {
   VisibilityState,
 } from '@tanstack/vue-table'
 
-import type { Task } from '../data/schema'
+import type { Review } from '../data/schema'
 import { valueUpdater } from '@/lib/utils'
 import {
   FlexRender,
@@ -24,8 +24,9 @@ import DataTableToolbar from './DataTableToolbar.vue'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 
 interface DataTableProps {
-  columns: ColumnDef<Task, any>[]
-  data: Task[]
+  columns: ColumnDef<Review, any>[]
+  data: Review[]
+  loading?: boolean
 }
 const props = defineProps<DataTableProps>()
 
@@ -70,11 +71,22 @@ const table = useVueTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          <template v-if="table.getRowModel().rows?.length">
+          <template v-if="loading">
+            <TableRow>
+              <TableCell :colspan="columns.length" class="h-24 text-center">
+                <div class="flex items-center justify-center space-x-2">
+                  <Icon name="i-radix-icons-reload" class="h-4 w-4 animate-spin" />
+                  <span>Пікірлер жүктелуде...</span>
+                </div>
+              </TableCell>
+            </TableRow>
+          </template>
+
+          <template v-else-if="table.getRowModel().rows?.length">
             <TableRow
-              v-for="row in table.getRowModel().rows"
-              :key="row.id"
-              :data-state="row.getIsSelected() && 'selected'"
+                v-for="row in table.getRowModel().rows"
+                :key="row.id"
+                :data-state="row.getIsSelected() && 'selected'"
             >
               <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
                 <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
@@ -84,10 +96,10 @@ const table = useVueTable({
 
           <TableRow v-else>
             <TableCell
-              :colspan="columns.length"
-              class="h-24 text-center"
+                :colspan="columns.length"
+                class="h-24 text-center"
             >
-              No results.
+              Пікірлер табылмады.
             </TableCell>
           </TableRow>
         </TableBody>

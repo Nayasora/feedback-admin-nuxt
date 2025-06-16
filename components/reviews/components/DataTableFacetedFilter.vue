@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import type { Column } from '@tanstack/vue-table'
 import type { Component } from 'vue'
-import type { Task } from '../data/schema'
+import type { Review } from '../data/schema'
 import { cn } from '@/lib/utils'
 import { computed } from 'vue'
 import { Popover, PopoverTrigger, PopoverContent } from '~/components/ui/popover'
 import { Button } from '~/components/ui/button'
 import { Command, CommandInput, CommandList, CommandItem, CommandGroup, CommandEmpty, CommandSeparator } from '~/components/ui/command'
+import { Badge } from '~/components/ui/badge'
+import { Separator } from '~/components/ui/separator'
 
 interface DataTableFacetedFilter {
-  column?: Column<Task, any>
+  column?: Column<Review, any>
   title?: string
   options: {
     label: string
@@ -33,27 +35,27 @@ const selectedValues = computed(() => new Set(props.column?.getFilterValue() as 
         <template v-if="selectedValues.size > 0">
           <Separator orientation="vertical" class="mx-2 h-4" />
           <Badge
-            variant="secondary"
-            class="rounded-sm px-1 font-normal lg:hidden"
+              variant="secondary"
+              class="rounded-sm px-1 font-normal lg:hidden"
           >
             {{ selectedValues.size }}
           </Badge>
           <div class="hidden lg:flex space-x-1">
             <Badge
-              v-if="selectedValues.size > 2"
-              variant="secondary"
-              class="rounded-sm px-1 font-normal"
+                v-if="selectedValues.size > 2"
+                variant="secondary"
+                class="rounded-sm px-1 font-normal"
             >
-              {{ selectedValues.size }} selected
+              {{ selectedValues.size }} таңдалды
             </Badge>
 
             <template v-else>
               <Badge
-                v-for="item in options
+                  v-for="item in options
                   .filter((option: any) => selectedValues.has(option.value))"
-                :key="item.value"
-                variant="secondary"
-                class="rounded-sm px-1 font-normal"
+                  :key="item.value"
+                  variant="secondary"
+                  class="rounded-sm px-1 font-normal"
               >
                 {{ item.label }}
               </Badge>
@@ -64,18 +66,17 @@ const selectedValues = computed(() => new Set(props.column?.getFilterValue() as 
     </PopoverTrigger>
     <PopoverContent class="w-[200px] p-0" align="start">
       <Command
-        :filter-function="(list: DataTableFacetedFilter['options'], term: any) => list.filter(i => i.label.toLowerCase()?.includes(term))"
+          :filter-function="(list: DataTableFacetedFilter['options'], term: any) => list.filter(i => i.label.toLowerCase()?.includes(term))"
       >
         <CommandInput :placeholder="title" />
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandEmpty>Нәтиже табылмады.</CommandEmpty>
           <CommandGroup>
             <CommandItem
-              v-for="option in options"
-              :key="option.value"
-              :value="option"
-              @select="(e: any) => {
-                console.log(e.detail.value)
+                v-for="option in options"
+                :key="option.value"
+                :value="option"
+                @select="(e: any) => {
                 const isSelected = selectedValues.has(option.value)
                 if (isSelected) {
                   selectedValues.delete(option.value)
@@ -90,7 +91,7 @@ const selectedValues = computed(() => new Set(props.column?.getFilterValue() as 
               }"
             >
               <div
-                :class="cn(
+                  :class="cn(
                   'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
                   selectedValues.has(option.value)
                     ? 'bg-primary text-primary-foreground'
@@ -111,11 +112,11 @@ const selectedValues = computed(() => new Set(props.column?.getFilterValue() as 
             <CommandSeparator />
             <CommandGroup>
               <CommandItem
-                :value="{ label: 'Clear filters' }"
-                class="justify-center text-center"
-                @select="column?.setFilterValue(undefined)"
+                  :value="{ label: 'Сүзгілерді тазалау' }"
+                  class="justify-center text-center"
+                  @select="column?.setFilterValue(undefined)"
               >
-                Clear filters
+                Сүзгілерді тазалау
               </CommandItem>
             </CommandGroup>
           </template>

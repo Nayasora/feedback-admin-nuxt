@@ -1,7 +1,38 @@
 <script setup lang="ts">
-import { columns } from '~/components/tasks/components/columns'
-import DataTable from '~/components/tasks/components/DataTable.vue'
-import tasks from '~/components/tasks/data/tasks.json'
+import { columns } from '~/components/reviews/components/columns'
+import DataTable from '~/components/reviews/components/DataTable.vue'
+import type { Review } from '~/components/reviews/data/schema'
+import { Button } from '~/components/ui/button'
+
+// Reactive data
+const reviews = ref<Review[]>([])
+const loading = ref(true)
+const error = ref<string | null>(null)
+
+// Fetch reviews from API
+const fetchReviews = async () => {
+  try {
+    loading.value = true
+    error.value = null
+    const data = await $fetch<Review[]>('/api/reviews')
+    reviews.value = data
+  } catch (err) {
+    console.error('Failed to fetch reviews:', err)
+    error.value = 'Пікірлерды жүктеу мүмкін болмады. Қайталап көріңіз.'
+  } finally {
+    loading.value = false
+  }
+}
+
+// Fetch reviews on component mount
+onMounted(() => {
+  fetchReviews()
+})
+
+// Set page meta
+definePageMeta({
+  title: 'Пікірлер'
+})
 </script>
 
 <template>
@@ -9,17 +40,36 @@ import tasks from '~/components/tasks/data/tasks.json'
     <div class="flex flex-wrap items-end justify-between gap-2">
       <div>
         <h2 class="text-2xl font-bold tracking-tight">
-          Tasks
+          Пікірлер
         </h2>
         <p class="text-muted-foreground">
-          Here&apos;s a list of your tasks for this month!
+          Тұтынушылардың Пікірлерын басқару және талдау
         </p>
       </div>
+      <div class="flex gap-2">
+        <Button @click="fetchReviews" :disabled="loading">
+          <Icon name="i-radix-icons-reload" :class="{ 'animate-spin': loading }" class="mr-2 h-4 w-4" />
+          Жаңарту
+        </Button>
+      </div>
     </div>
-    <DataTable :data="tasks.data" :columns="columns" />
+
+    <!-- Error state -->
+    <div v-if="error" class="rounded-md border border-red-200 bg-red-50 p-4">
+      <div class="flex">
+        <Icon name="i-radix-icons-exclamation-triangle" class="h-5 w-5 text-red-400" />
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">Қате</h3>
+          <p class="mt-1 text-sm text-red-700">{{ error }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data table -->
+    <DataTable
+        :data="reviews"
+        :columns="columns"
+        :loading="loading"
+    />
   </div>
 </template>
-
-<style scoped>
-
-</style>
