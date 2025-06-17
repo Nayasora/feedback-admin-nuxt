@@ -6,10 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
 import DateRangePicker from "~/components/common/DateRangePicker.vue"
 import Overview from "~/components/dashboard/Overview.vue"
 import { Avatar, AvatarFallback } from "~/components/ui/avatar"
-import * as XLSX from 'xlsx';
 
-const exportToExcel = () => {
+const exportToExcel = async () => {
   // Создаем рабочую книгу
+  const XLSX = await import('xlsx');
+
   const workbook = XLSX.utils.book_new();
 
   // Данные для общей статистики
