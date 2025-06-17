@@ -14,11 +14,6 @@ export const navMenu: NavMenu[] = [
         icon: 'i-lucide-calendar-check-2',
         link: '/reviews',
       },
-      {
-        title: 'Аккаунт',
-        'icon': 'i-lucide-user',
-        link: '/account',
-      }
     ]
   }
 ]

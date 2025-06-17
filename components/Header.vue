@@ -29,9 +29,6 @@ function setLinks() {
     if (breadcrumb.title === 'Reviews') {
       breadcrumb.title = 'Пікірлер'
     }
-    if (breadcrumb.title === 'Account') {
-      breadcrumb.title = 'Аккаунт'
-    }
   })
 
   return [{ title: 'Басты', href: '/' }, ...breadcrumbs]
